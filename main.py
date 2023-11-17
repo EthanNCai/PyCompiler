@@ -8,12 +8,7 @@ with open("code1.txt", "r") as file:
 
 dfa = DFA(start_state, accept_state)
 
-
-# input_string = 'func:=nicer;"hello",{nidcer}dwad'
-
-
 i = 0
-
 
 while i < len(input_string):
     # print(input_string[i], dfa.current_state)
