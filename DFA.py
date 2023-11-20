@@ -15,6 +15,8 @@ class DFA:
             'DONEA': self.state_donea,
             'DONEB': self.state_doneb,
             'INASS': self.state_inass,
+            'BEFCUR': self.state_befcur,
+            'BEFICUR': self.state_beficur
         }
         self.start_state = start_state
         self.current_state = start_state
@@ -34,7 +36,8 @@ class DFA:
         string = ''.join(self.buffer)
         if string not in [" ", "\n", "\t"]:
             token = self.lookup_for_token(string)
-            print(f'({token}, "{string}")')
+            print(
+                f'({"ERROR, " if self.hint == "ERROR" else ""}{token}, "{string}")')
 
     def refresh(self):
         self.buffer.clear()
@@ -63,7 +66,7 @@ class DFA:
             return 'INID'
         elif symbol_in.isdigit():
             return 'INNUM'
-        elif symbol_in in ["+", "-", "*", "/", "(", ")", ";", "[", "]", "="]:
+        elif symbol_in in ["+", "-", "*", "/", "(", ")", ";", "[", "]", "=", ","]:
             return 'DONEA'
         elif symbol_in == ":":
             return 'BEFASS'
@@ -71,6 +74,10 @@ class DFA:
             return 'INCOMM'
         elif symbol_in == "\"":
             return 'INCHAR'
+        elif symbol_in == "<":
+            return 'BEFCUR'
+        elif symbol_in == ">":
+            return 'BEFICUR'
         else:
             return 'OTHER'
 
@@ -134,3 +141,20 @@ class DFA:
     def state_commend(self, symbol_in):
         self.hint = "COMMENT"
         return 'ACCEPT'
+
+    def state_befcur(self, symbol_in):
+        if symbol_in == ">":
+            self.buffer.append(symbol_in)
+            return 'ACCEPT'
+        elif symbol_in == "=":
+            self.buffer.append(symbol_in)
+            return 'ACCEPT'
+        else:
+            return 'ACCEPT'
+
+    def state_beficur(self, symbol_in):
+        if symbol_in == "=":
+            self.buffer.append(symbol_in)
+            return 'ACCEPT'
+        else:
+            return 'ACCEPT'

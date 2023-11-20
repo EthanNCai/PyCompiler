@@ -3,7 +3,7 @@ from DFA import DFA
 start_state = 'START'
 accept_state = 'ACCEPT'
 
-with open("code1.txt", "r") as file:
+with open("code1(contain error).txt", "r") as file:
     input_string = file.read()
 
 dfa = DFA(start_state, accept_state)
@@ -19,4 +19,6 @@ while i < len(input_string):
     else:
         i += 1
         if i == len(input_string):
+            dfa.run(input_string[i-1])
             dfa.conclude()
+            dfa.refresh()
