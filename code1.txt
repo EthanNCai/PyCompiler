@@ -1,5 +1,5 @@
 procedure divide;
 var w;
-begin
+begin 
     r := x; q := 0; w := y;
 end
