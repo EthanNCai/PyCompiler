@@ -24,6 +24,7 @@ class DFA:
         self.state_changed = False
         self.buffer = []
         self.hint = ""
+        self.error_hint = ""
 
     def run(self, symbol_):
         if self.current_state == self.accept_states:
@@ -37,7 +38,7 @@ class DFA:
         if string not in [" ", "\n", "\t"]:
             token = self.lookup_for_token(string)
             print(
-                f'({"ERROR, " if self.hint == "ERROR" else ""}{token}, "{string}")')
+                f'({self.error_hint if self.hint == "ERROR" else ""}{token}, "{string}")')
 
     def refresh(self):
         self.buffer.clear()
@@ -120,6 +121,7 @@ class DFA:
             self.buffer.append(symbol_in)
             return 'INASS'
         else:
+            self.error_hint = " = EXPECTED AFTER :"
             self.hint = "ERROR"
             return 'ACCEPT'
 
