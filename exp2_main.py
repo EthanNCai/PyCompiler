@@ -13,14 +13,19 @@ G[E]:
 start_state = 'START'
 accept_state = 'ACCEPT'
 
-with open("exp2_tests/test1.txt", "r") as file:
+
+with open("exp2_tests/test3.txt", "r") as file:
     input_string = file.read()
 
 dfa = DFA(start_state, accept_state)
 
 token_list = []
 
+print("\033[31m-- Original --\033[0m")
+print(input_string)
+
 print("\033[32m-- Lexer part --\033[0m")
+
 i = 0
 while i < len(input_string):
     dfa.run(input_string[i])
@@ -34,8 +39,9 @@ while i < len(input_string):
             token_list.append(dfa.conclude())
             dfa.refresh()
 
-print(" ")
-print("\033[32m-- Parser part--\033[0m")
+print()
+print()
+print("\033[33m-- Parser part--\033[0m")
 
 debug = False
 parser = Parser(token_list, debug)
