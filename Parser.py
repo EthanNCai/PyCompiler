@@ -8,14 +8,14 @@ class Parser:
 
     def report_error(self, expected):
         print(f"Error in position {self.position}: Unexpected token {self.current_token}, expected {expected}")
-        exit(1)
+        exit(0)
 
     def run(self):
-        if self.E() and self.current_token is None:
+
+        if self.E() and self.current_token[0] == -1:
             print("Accepted")
         else:
             self.report_error('+ or *')
-            print("Rejected")
 
     def advance(self):
 
@@ -28,55 +28,65 @@ class Parser:
         if self.T():
             if self.E_():
                 return True
-            else:
-                return False
-        else:
-            self.report_error("i or (")
-            return False
+           
+                
+
+        return False
 
     def E_(self):
+
+        follow_E_ = [14,-1] # [), $]
         if self.debug:
             print('E_', end='->')
-        elif self.current_token and self.current_token[0] == 3:  # '+' token
+
+        # +TE':
+        if self.current_token and self.current_token[0] == 3:  # '+' token
             self.advance()  # Consume '+'
             if self.T():
                 if self.E_():
                     return True
-                else:
-                    return False
-            else:
-                return False
-        else:
+ 
+            self.report_error('+ <E_1>')
+        # ε
+        elif self.current_token and self.current_token[0] in follow_E_:
             return True
-            # ε production
+        self.report_error(') <E_2>')
+            
 
     def T(self):
         if self.debug:
             print('T', end='->')
+
+        # FT':
         if self.F():
             if self.T_():
                 return True
-            else:
-                return False
-        else:
-            return False
+        return False
 
     def T_(self):
+        follow_T_ = [3, 14,-1] # [+, ), $]
         if self.debug:
             print('T_', end='->')
+
+        # *FT':
+        
         if self.current_token and self.current_token[0] == 5:  # '*' token
             self.advance()  # Consume '*'
             if self.F():
                 if self.T_():
                     return True
             return False
-        else:
-            # ε production
+        # ε
+        elif self.current_token and self.current_token[0] in follow_T_:
             return True
+        self.report_error('+ or ) <T_1>')
+
 
     def F(self):
         if self.debug:
             print('F', end='->')
+
+        # (E) :
         if self.current_token and self.current_token[0] == 13:  # '(' token
             self.advance()  # Consume '('
             if self.E():
@@ -84,11 +94,12 @@ class Parser:
                     self.advance()  # Consume ')'
                     return True
                 else:
-                    self.report_error(")")
+                    self.report_error(") <F1>")
             else:
-                self.report_error("expression")
+                self.report_error("( or id <F2>")
+        # i :
         elif self.current_token and self.current_token[0] == 1:  # 'i' token
             self.advance()  # Consume 'i'
             return True
         else:
-            self.report_error("'(' or id")
+            self.report_error("( or i <F3>")
