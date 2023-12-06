@@ -15,7 +15,7 @@ class Parser:
         if self.E() and self.current_token[0] == -1:
             print("Accepted")
         else:
-            self.report_error('+ or *')
+            print("Rejected")
 
     def advance(self):
 
@@ -28,14 +28,11 @@ class Parser:
         if self.T():
             if self.E_():
                 return True
-           
-                
-
         return False
 
     def E_(self):
 
-        follow_E_ = [14,-1] # [), $]
+        follow_E_ = [14, -1]  # [), $]
         if self.debug:
             print('E_', end='->')
 
@@ -45,13 +42,12 @@ class Parser:
             if self.T():
                 if self.E_():
                     return True
- 
-            self.report_error('+ <E_1>')
+
         # ε
         elif self.current_token and self.current_token[0] in follow_E_:
             return True
-        self.report_error(') <E_2>')
-            
+        self.report_error("'+' <E_1>")
+        return False
 
     def T(self):
         if self.debug:
@@ -64,12 +60,12 @@ class Parser:
         return False
 
     def T_(self):
-        follow_T_ = [3, 14,-1] # [+, ), $]
+        follow_T_ = [3, 14, -1]  # [+, ), $]
         if self.debug:
             print('T_', end='->')
 
         # *FT':
-        
+
         if self.current_token and self.current_token[0] == 5:  # '*' token
             self.advance()  # Consume '*'
             if self.F():
@@ -79,8 +75,8 @@ class Parser:
         # ε
         elif self.current_token and self.current_token[0] in follow_T_:
             return True
-        self.report_error('+ or ) <T_1>')
-
+        self.report_error("'*' <T_1>")
+        return False
 
     def F(self):
         if self.debug:
@@ -95,11 +91,13 @@ class Parser:
                     return True
                 else:
                     self.report_error(") <F1>")
+                    return False
             else:
-                self.report_error("( or id <F2>")
+                return False
         # i :
         elif self.current_token and self.current_token[0] == 1:  # 'i' token
             self.advance()  # Consume 'i'
             return True
         else:
             self.report_error("( or i <F3>")
+            return False

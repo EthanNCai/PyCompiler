@@ -14,7 +14,7 @@ start_state = 'START'
 accept_state = 'ACCEPT'
 
 
-with open("exp2_tests/test8.txt", "r") as file:
+with open("exp2_tests/test7.txt", "r") as file:
     input_string = file.read()
 
 dfa = DFA(start_state, accept_state)
@@ -39,7 +39,7 @@ while i < len(input_string):
             token_list.append(dfa.conclude())
             dfa.refresh()
 token_list.pop()
-token_list.append((-1,"EOF"))
+token_list.append((-1, "EOF"))
 print('(-1,"EOF")')
 
 print()
