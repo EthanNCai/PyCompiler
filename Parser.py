@@ -1,103 +1,118 @@
+from Lexer import TOKEN_DICT
+
+
 class Parser:
-    def __init__(self, token_list, debug):
+    def __init__(self, token_list):
         self.token_list = token_list
         self.token_list_iterator = iter(token_list)
         self.current_token = next(self.token_list_iterator)
         self.position = 0
-        self.debug = debug
+        self.isError = False
 
-    def report_error(self, expected):
-        print(f"Error in position {self.position}: Unexpected token {self.current_token}, expected {expected}")
-        exit(0)
+    def print_error(self, expected):
+        self.isError = True
+        print(
+            f"Error in position {self.position}: Unexpected token {self.current_token}, expected {expected}")
 
     def run(self):
+        self.E()
+        if not self.isError:
+            print('Accepted!')
 
-        if self.E() and self.current_token[0] == -1:
-            print("Accepted")
+    def match(self, token):
+        if token == self.current_token[1]:
+            self.current_token = next(self.token_list_iterator, None)
+            self.position += 1
+            return True
         else:
-            print("Rejected")
+            return False
 
-    def advance(self):
-
+    def drop_input(self):
         self.current_token = next(self.token_list_iterator, None)
         self.position += 1
 
     def E(self):
-        if self.debug:
-            print('E', end='->')
+        FOLLOW = [')', 'EOF']
+        SYNCH = [')', 'EOF']
         if self.T():
             if self.E_():
                 return True
-        return False
 
     def E_(self):
 
-        follow_E_ = [14, -1]  # [), $]
-        if self.debug:
-            print('E_', end='->')
+        FOLLOW = [')', 'EOF']
+        SYNCH = []
+        EXPECT = "'+' or ')' or 'EOF'"
 
-        # +TE':
-        if self.current_token and self.current_token[0] == 3:  # '+' token
-            self.advance()  # Consume '+'
-            if self.T():
-                if self.E_():
-                    return True
-
-        # ε
-        elif self.current_token and self.current_token[0] in follow_E_:
-            return True
-        self.report_error("'+' <E_1>")
-        return False
+        while True:
+            # +TE':
+            if self.match('+'):
+                if self.T():
+                    if self.E_():
+                        return True
+            # ε
+            elif self.current_token[1] in FOLLOW:
+                return True
+            # Error Recovery
+            else:
+                self.print_error(EXPECT)
+                if self.current_token[1] in SYNCH:
+                    pass
+                else:
+                    self.drop_input()
+                return True
 
     def T(self):
-        if self.debug:
-            print('T', end='->')
+        FOLLOW = ['+', ')', 'EOF']
+        SYNCH = ['+', ')', 'EOF']
 
         # FT':
         if self.F():
             if self.T_():
                 return True
-        return False
 
     def T_(self):
-        follow_T_ = [3, 14, -1]  # [+, ), $]
-        if self.debug:
-            print('T_', end='->')
-
-        # *FT':
-
-        if self.current_token and self.current_token[0] == 5:  # '*' token
-            self.advance()  # Consume '*'
-            if self.F():
-                if self.T_():
-                    return True
-            return False
-        # ε
-        elif self.current_token and self.current_token[0] in follow_T_:
-            return True
-        self.report_error("'*' <T_1>")
-        return False
+        FOLLOW = ['+', ')', 'EOF']
+        SYNCH = []
+        EXPECT = "'*' or '+' or ')' or 'EOF'"
+        while True:
+            # *FT':
+            if self.match('*'):
+                if self.F():
+                    if self.T_():
+                        return True
+            # ε
+            elif self.current_token[1] in FOLLOW:
+                return True
+            # Error Recovery
+            else:
+                self.print_error(EXPECT)
+                # Error Recovery
+                if self.current_token[1] in SYNCH:
+                    pass
+                else:
+                    self.drop_input()
+                return True
 
     def F(self):
-        if self.debug:
-            print('F', end='->')
-
-        # (E) :
-        if self.current_token and self.current_token[0] == 13:  # '(' token
-            self.advance()  # Consume '('
-            if self.E():
-                if self.current_token and self.current_token[0] == 14:  # ')' token
-                    self.advance()  # Consume ')'
-                    return True
-                else:
-                    self.report_error(") <F1>")
-                    return False
+        FOLLOW = ['+', '*', ')', 'EOF']  # unused
+        SYNCH = ['+', '*', ')', 'EOF']
+        EXPECT = "'(' or 'id'"
+        while True:
+            # (E) :
+            if self.match('('):
+                if self.E():
+                    if self.match(')'):
+                        return True
+            # i :
+            elif self.match('id'):
+                return True
+            # Error Recovery
             else:
-                return False
-        # i :
-        elif self.current_token and self.current_token[0] == 1:  # 'i' token
-            self.advance()  # Consume 'i'
-            return True
-        else:
-            self.report_error("( or i <F3>")
-            return False
+                self.print_error(EXPECT)
+                # Error Recovery
+                if self.current_token[1] in SYNCH:
+                    pass
+                else:
+                    self.drop_input()
+                return True

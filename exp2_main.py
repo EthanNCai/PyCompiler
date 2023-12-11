@@ -14,7 +14,7 @@ start_state = 'START'
 accept_state = 'ACCEPT'
 
 
-with open("exp2_tests/test7.txt", "r") as file:
+with open("exp2_tests/test2.txt", "r") as file:
     input_string = file.read()
 
 dfa = DFA(start_state, accept_state)
@@ -42,9 +42,10 @@ token_list.pop()
 token_list.append((-1, "EOF"))
 print('(-1,"EOF")')
 
+# ========================================================#
+
 print()
 print("\033[33m-- Parser part--\033[0m")
 
-debug = False
-parser = Parser(token_list, debug)
+parser = Parser(token_list)
 parser.run()
