@@ -8,6 +8,7 @@ class Parser:
         self.current_token = next(self.token_list_iterator)
         self.position = 0
         self.isError = False
+        print(self.token_list)
 
     def print_error(self, expected):
         self.isError = True
@@ -20,7 +21,9 @@ class Parser:
             print('Accepted!')
 
     def match(self, token):
+
         if token == self.current_token[1]:
+
             self.current_token = next(self.token_list_iterator, None)
             self.position += 1
             return True
@@ -29,14 +32,15 @@ class Parser:
 
     def drop_input(self):
         self.current_token = next(self.token_list_iterator, None)
-        self.position += 1
 
     def E(self):
         FOLLOW = [')', 'EOF']
         SYNCH = [')', 'EOF']
-        if self.T():
-            if self.E_():
-                return True
+        EXPECT = 'EOF'
+        while True:
+            if self.T():
+                if self.E_():
+                    return True
 
     def E_(self):
 
@@ -57,10 +61,9 @@ class Parser:
             else:
                 self.print_error(EXPECT)
                 if self.current_token[1] in SYNCH:
-                    pass
+                    return True
                 else:
                     self.drop_input()
-                return True
 
     def T(self):
         FOLLOW = ['+', ')', 'EOF']
@@ -89,10 +92,9 @@ class Parser:
                 self.print_error(EXPECT)
                 # Error Recovery
                 if self.current_token[1] in SYNCH:
-                    pass
+                    return True
                 else:
                     self.drop_input()
-                return True
 
     def F(self):
         FOLLOW = ['+', '*', ')', 'EOF']  # unused
@@ -112,7 +114,6 @@ class Parser:
                 self.print_error(EXPECT)
                 # Error Recovery
                 if self.current_token[1] in SYNCH:
-                    pass
+                    return True
                 else:
                     self.drop_input()
-                return True
