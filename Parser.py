@@ -8,7 +8,6 @@ class Parser:
         self.current_token = next(self.token_list_iterator)
         self.position = 0
         self.isError = False
-        print(self.token_list)
 
     def print_error(self, expected):
         self.isError = True
