@@ -15,7 +15,7 @@ class Parser:
             f"Error in position {self.position}: Unexpected token {self.current_token}, expected {expected}")
 
     def run(self):
-        self.E()
+        self.S()
         if not self.isError:
             print('Accepted!')
 
@@ -32,14 +32,24 @@ class Parser:
     def drop_input(self):
         self.current_token = next(self.token_list_iterator, None)
 
+    def S(self):
+        EXPECT = "EOF"
+        while True:
+            if self.E():
+                self.match('EOF')
+                return True
+            else:
+                self.print_error(EXPECT)
+                # Error Recovery
+                self.drop_input()
+
     def E(self):
         FOLLOW = [')', 'EOF']
         SYNCH = [')', 'EOF']
         EXPECT = 'EOF'
-        while True:
-            if self.T():
-                if self.E_():
-                    return True
+        if self.T():
+            if self.E_():
+                return True
 
     def E_(self):
 
