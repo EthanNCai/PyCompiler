@@ -14,7 +14,7 @@ start_state = 'START'
 accept_state = 'ACCEPT'
 
 
-with open("exp3_tests/test3.txt", "r") as file:
+with open("exp3_tests/test4.txt", "r") as file:
     input_string = file.read()
 
 dfa = DFA(start_state, accept_state)

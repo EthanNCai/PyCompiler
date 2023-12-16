@@ -95,7 +95,7 @@ class Parser2:
 
         stack = ' '.join(self.analyse_stack.stack)
         input_stack = ' '.join(reversed(self.input_stack.stack))
-        output = f'{stack:<28}\t{input_stack:>28}'
+        output = f'{stack:<30}\t{input_stack:>40}'
         print(output, end='\t\t')
 
     @staticmethod
