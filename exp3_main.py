@@ -3,7 +3,6 @@ from Parser2 import Parser2
 
 """
 G[E]:
-        S  →E$
         E  →TE'
         E' →+TE'|ε
         T  →FT'
@@ -15,7 +14,7 @@ start_state = 'START'
 accept_state = 'ACCEPT'
 
 
-with open("exp2_tests/test8.txt", "r") as file:
+with open("exp3_tests/test3.txt", "r") as file:
     input_string = file.read()
 
 dfa = DFA(start_state, accept_state)
@@ -49,4 +48,4 @@ print()
 print("\033[33m-- Parser part--\033[0m")
 
 parser = Parser2(token_list)
-# parser.run()
+parser.run()
