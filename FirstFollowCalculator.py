@@ -1,6 +1,7 @@
 import itertools
 
 # written by JunzhiCai in 2023, Dec. 17th.
+# 我把单个产生式叫做decision，比如说E' →+TE'|ε有两个decisions 分别是+TE'和ε
 
 """
 G[E]:
@@ -40,6 +41,9 @@ follow = {
 
 non_terminator_counts = len(NON_TERMINATOR_LIST)
 nullable_non_terminator = ['E_', 'T_']
+
+
+# 表示可能推导出null的非终结符，这个东西其实用代码自动算很简单，但是我懒得搞了
 
 
 def find_first(target_non_terminator, current_non_terminator):
@@ -102,12 +106,15 @@ def find_index(target, _list):
         return None
 
 
-for non_terminator in NON_TERMINATOR_LIST:
-    find_first(non_terminator, non_terminator)
+def main():
+    print('FIRST')
+    for non_terminator in NON_TERMINATOR_LIST:
+        find_first(non_terminator, non_terminator)
+    print(first)
 
-print('FIRST')
-print(first)
+    find_follow('E')
+    print('FOLLOW')
+    print(follow)
 
-find_follow('E')
-print('FOLLOW')
-print(follow)
+
+main()
