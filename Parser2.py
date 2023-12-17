@@ -45,7 +45,6 @@ EXPECT = {
 
 class Parser2:
     def __init__(self, token_list):
-        print(token_list)
         self.analyse_stack = Stack(['EOF', 'E'])
         self.input_stack = Stack([i[1] for i in reversed(token_list)])
         self.analysis_table = ANALYSE_TABLE
