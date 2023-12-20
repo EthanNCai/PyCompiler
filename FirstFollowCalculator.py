@@ -40,9 +40,8 @@ follow = {
 }
 
 non_terminator_counts = len(NON_TERMINATOR_LIST)
+
 nullable_non_terminator = ['E_', 'T_']
-
-
 # 表示可能推导出null的非终结符，这个东西其实用代码自动算很简单，但是我懒得搞了
 
 

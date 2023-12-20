@@ -53,29 +53,35 @@ class Parser2:
     def run(self):
 
         while not self.analyse_stack.is_accept():
+            # 如果目前的符号栈还没有在接收状态的话，就一直循环
             self.print_step()
+            # 打印目前的分析栈和输入栈的可视化字符界面
             left = self.analyse_stack.peek()
             right = self.input_stack.peek()
+            # 分别从分析栈和输入栈获取一个栈顶元素（但没有弹出）
             result = self.analysis_table.get((left, right))
+            # 从预测表里面查询，结果不是None代表查到了
 
             if result is not None or self.is_terminal(left):
 
+                # 如果在同步字符集里面，说明出错了，这个时候我们需要弹出一个分析栈元素
                 if result == ['synch']:
                     passed_non_term = self.analyse_stack.pop()
                     self.print_error_synch(passed_non_term, self.position, right, EXPECT[passed_non_term])
                 elif self.is_terminal(left):
-                    # 左边是终结符
+                    # 如果分析栈栈顶是终结符，并且分析栈有结果的话，我们弹出终结符然后压入从分析表查到的东西
                     self.analyse_stack.pop()
                     match = self.input_stack.pop()
                     self.position += 1
                     self.print_output_event(match)
                 else:
-                    # 左边是非终结符
+                    # 左边是非终结符，那么我们直接匹配
                     self.analyse_stack.pop()
                     self.analyse_stack.push([i for i in reversed(result)])
                     self.print_match_event(left, ''.join(result))
 
             else:
+                # 如果分析表返回None 说明出错，这时候我们直接弹掉一个输入流的字符
                 passed_sym = self.input_stack.pop()
                 self.position += 1
                 self.print_error_pass(passed_sym, self.position, passed_sym, EXPECT[left])
